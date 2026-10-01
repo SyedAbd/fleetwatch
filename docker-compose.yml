@@ -1,0 +1,14 @@
+services:
+  collector:
+    build: .
+    ports: ["8765:8765"]
+    volumes:
+      - fleet-data:/data
+      - ./samples/demo-config.json:/data/config.json:ro
+  simulator:
+    build: .
+    depends_on: [collector]
+    command: ["simulate", "--server", "http://collector:8765", "--token", "demo-agent-token", "--nodes", "12", "--interval", "3"]
+    restart: unless-stopped
+volumes:
+  fleet-data:
